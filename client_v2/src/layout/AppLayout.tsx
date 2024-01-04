@@ -3,6 +3,7 @@ import { Header } from "antd/es/layout/layout";
 import { FC, ReactNode, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { v4 } from "uuid";
+import SearchPanel from "../components/SearchPanel";
 
 const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const menuHeader = useMemo(
@@ -13,6 +14,10 @@ const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
       },
       {
         label: <Link to={"/logout"}>Выход</Link>,
+        key: v4(),
+      },
+      {
+        label: <SearchPanel />,
         key: v4(),
       },
     ],

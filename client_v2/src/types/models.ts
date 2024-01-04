@@ -84,4 +84,15 @@ export interface IResultTestGroup {
   title: string;
 }
 
+export interface Attachment {
+  _id: string;
+  filename: string;
+  uploadDate: string;
+  file_id: string;
+  contentType: string;
+  metadata: {
+    url: string;
+  };
+}
+
 export type Role = "Admin" | "Teacher" | "Student";

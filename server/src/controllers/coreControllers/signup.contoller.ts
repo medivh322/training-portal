@@ -4,11 +4,7 @@ import jwt from 'jsonwebtoken';
 import express from 'express';
 import { env } from '@helpers/';
 import { User } from '@modelsuser.model';
-
-interface IUser {
-  id: string;
-  role: string;
-}
+import { IUser } from 'src/types';
 
 const auth = async (req: express.Request, res: express.Response) => {
   try {
@@ -37,15 +33,6 @@ const auth = async (req: express.Request, res: express.Response) => {
         : 'Необходимо пройти авторизацию',
     });
   }
-};
-
-const logout = async (req: express.Request, res: express.Response) => {
-  const { id } = <IUser>jwt.verify(req.cookies.token, env('JWT_SECRET'));
-  await User.findByIdAndUpdate(id, { isLoggen: false });
-  res.clearCookie('token');
-  res.status(200).json({
-    success: false,
-  });
 };
 
 const signup = async (req: express.Request, res: express.Response) => {
@@ -89,4 +76,4 @@ const signup = async (req: express.Request, res: express.Response) => {
   }
 };
 
-export { signup, auth, logout };
+export { signup, auth };

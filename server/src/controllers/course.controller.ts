@@ -2,6 +2,9 @@ import { Course } from '@modelscourses.model';
 import { User } from '@modelsuser.model';
 import express from 'express';
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
+import { env } from '@helpersindex';
+import { IUser } from 'src/types';
 
 const createCourse = async (req: express.Request, res: express.Response) => {
   try {
@@ -64,26 +67,27 @@ const getAllCoursesForStudent = async (req: express.Request, res: express.Respon
                 },
               },
             },
+            {
+              $project: {
+                label: '$title',
+                value: '$_id',
+                _id: 0,
+              },
+            },
           ],
-          as: 'matching',
-        },
-      },
-      {
-        $match: {
-          matching: { $ne: [] },
+          as: 'courses',
         },
       },
       {
         $project: {
-          label: { $first: '$matching.title' },
-          value: { $first: '$matching._id' },
+          courses: 1,
         },
       },
     ]);
 
     res.status(200).json({
       success: true,
-      courses,
+      courses: courses[0].courses,
     });
   } catch (error: any) {
     res.status(500).json({
@@ -209,6 +213,83 @@ const getCourseMembers = async (req: express.Request, res: express.Response) => 
   }
 };
 
+const searchCourses = async (req: express.Request, res: express.Response) => {
+  try {
+    const { query } = req.query;
+    const token = req.cookies.token;
+    const settingsUser = <IUser>jwt.verify(token, env('JWT_SECRET'));
+    let courses = [];
+
+    if (settingsUser.role === 'Teacher') {
+      courses = await Course.find({
+        teacherId: new mongoose.Types.ObjectId(settingsUser.id),
+        title: { $regex: query, $options: 'i' },
+      });
+    } else {
+      courses = await User.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(settingsUser.id),
+          },
+        },
+        {
+          $lookup: {
+            from: 'courses',
+            let: {
+              courses: '$courses',
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      {
+                        $in: ['$_id', '$$courses'],
+                      },
+                      {
+                        $regexMatch: {
+                          input: '$title',
+                          regex: query,
+                          options: 'i',
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+              {
+                $project: {
+                  label: '$title',
+                  value: '$_id',
+                  _id: 0,
+                },
+              },
+            ],
+            as: 'courses',
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            courses: 1,
+          },
+        },
+      ]);
+    }
+
+    res.status(200).json({
+      success: true,
+      courses: courses[0].courses,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      error,
+    });
+  }
+};
+
 export const courseController = {
   getAllCourses,
   createCourse,
@@ -216,4 +297,5 @@ export const courseController = {
   setCourseMembers,
   getCourseMembers,
   getAllCoursesForStudent,
+  searchCourses,
 };

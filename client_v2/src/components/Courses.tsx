@@ -1,22 +1,7 @@
-import {
-  Button,
-  Flex,
-  Form,
-  Input,
-  Menu,
-  Select,
-  Space,
-  Typography,
-} from "antd";
+import { Button, Flex, Form, Input, Menu, Space } from "antd";
 import Layout from "antd/es/layout/layout";
-import { useMemo, useState } from "react";
-import {
-  Link,
-  Outlet,
-  useMatches,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { useMemo } from "react";
+import { Link, Outlet, useMatches, useSearchParams } from "react-router-dom";
 import { v4 } from "uuid";
 import { coursesApiHooks } from "../redux/courses/reducer";
 import { useAppSelector } from "../redux/store";
@@ -28,11 +13,8 @@ const Courses = () => {
 
   const courseId = searchParams.get("course");
   const matches = useMatches();
-  const navigate = useNavigate();
 
   const match = matches[matches.length - 1];
-
-  const [currentCourse, setCurrentSource] = useState<string | null>(courseId);
 
   const teacherId = useAppSelector(selectUserId);
 
@@ -49,7 +31,7 @@ const Courses = () => {
           <Link
             to={{
               pathname: "tests",
-              search: `?course=${currentCourse}`,
+              search: `?course=${courseId}`,
             }}
           >
             Тесты
@@ -63,7 +45,7 @@ const Courses = () => {
           <Link
             to={{
               pathname: "results",
-              search: `?course=${currentCourse}`,
+              search: `?course=${courseId}`,
             }}
           >
             Результаты
@@ -74,9 +56,7 @@ const Courses = () => {
       },
       {
         label: (
-          <Link
-            to={{ pathname: "materials", search: `?course=${currentCourse}` }}
-          >
+          <Link to={{ pathname: "materials", search: `?course=${courseId}` }}>
             Материалы
           </Link>
         ),
@@ -84,7 +64,7 @@ const Courses = () => {
         key: v4(),
       },
     ],
-    [currentCourse]
+    [courseId]
   );
 
   return (
@@ -119,7 +99,7 @@ const Courses = () => {
           </Space>
         </Form>
       </Flex>
-      {!!currentCourse && (
+      {!!courseId && (
         <>
           <Menu
             mode="horizontal"

@@ -1,7 +1,6 @@
 import mongoose, { mongo } from 'mongoose';
 import app from './app';
 import dotenv from 'dotenv';
-import { GridFsStorage } from 'multer-gridfs-storage';
 
 import { env } from '@helpers/';
 
@@ -13,6 +12,12 @@ mongoose.connection.on('error', (error: any) => {
   console.error(`🚫 Error → : ${error.message}`);
 });
 
+export let GridFSBucket: mongoose.mongo.GridFSBucket;
+mongoose.connection.once('open', () => {
+  GridFSBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+    bucketName: 'uploads',
+  });
+});
 const port = parseInt(env('PORT'), 10);
 app.listen(port, () => {
   console.log(`Express running → On PORT : ${port}`);

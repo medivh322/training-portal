@@ -5,24 +5,34 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import { API_BASE_URL } from "../../config/serverApiConfig";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { CORE_REDUCER, SET_ID, SET_ROLE } from "./types";
+import { CORE_REDUCER, LOADING_FULLSCREEN, SET_ID, SET_ROLE } from "./types";
 import { Role, UserSettings, customQueryValue } from "../../types/models";
 import { FetchBaseQueryArgs } from "@reduxjs/toolkit/dist/query/fetchBaseQuery";
 import errorHandler from "../../request/errorHundler";
 import { RcFile } from "antd/es/upload";
 
 const initialState: {
+  isLoadingFullScreen: boolean;
   userId: string | null;
   role: Role | null;
 } = {
   userId: null,
   role: null,
+  isLoadingFullScreen: false,
 };
 
 const coreReducer = createSlice({
   name: CORE_REDUCER,
   initialState,
   reducers: {
+    [LOADING_FULLSCREEN]: (
+      state,
+      action: PayloadAction<{
+        loading: boolean;
+      }>
+    ) => {
+      state.isLoadingFullScreen = action.payload.loading;
+    },
     [SET_ID]: (
       state,
       action: PayloadAction<{
@@ -50,11 +60,9 @@ const baseQuery =
       api,
       extraOptions
     )) as customQueryValue;
-    if (result.error && result.error.data?.noNotifications) {
+    if (result.error && !result.error.data?.noNotifications) {
       errorHandler(result.error);
     }
-
-    console.log(result);
 
     return result;
   };
@@ -67,9 +75,10 @@ export const coreApi = createApi({
   }),
   tagTypes: ["Auth"],
   endpoints: (builder) => ({
-    checkAuthUser: builder.query<{ id: string; role: Role }, void>({
+    checkToken: builder.query<{ id: string; role: Role }, null>({
       query: () => ({
         url: "auth",
+        method: "GET",
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
@@ -78,7 +87,6 @@ export const coreApi = createApi({
           dispatch(coreReducer.actions[SET_ROLE]({ role: data.role }));
         } catch (error: any) {}
       },
-      providesTags: ["Auth"],
     }),
     login: builder.mutation<{ role: Role }, UserSettings>({
       query: (loginParameters) => ({
@@ -87,19 +95,13 @@ export const coreApi = createApi({
         body: loginParameters,
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        // dispatch(coreReducer.actions[LOADING_FULLSCREEN]({ loading: true }));
         try {
           const { data } = await queryFulfilled;
           dispatch(coreReducer.actions.SET_ROLE({ role: data.role }));
         } catch (error: any) {}
+        // dispatch(coreReducer.actions[LOADING_FULLSCREEN]({ loading: false }));
       },
-      invalidatesTags: ["Auth"],
-    }),
-    logout: builder.mutation<boolean, void>({
-      query: () => ({
-        url: "logout",
-        method: "GET",
-      }),
-      invalidatesTags: ["Auth"],
     }),
     signupMember: builder.mutation<
       boolean,
@@ -110,41 +112,6 @@ export const coreApi = createApi({
         method: "POST",
         body,
       }),
-    }),
-    uploadFile: builder.mutation<
-      void,
-      { courseId: string | null; file: string | Blob | RcFile }
-    >({
-      query: ({ file, courseId }) => {
-        const formData = new FormData();
-        formData.append("file", file);
-        return {
-          url: "upload",
-          method: "POST",
-          params: {
-            courseId,
-          },
-          body: formData,
-        };
-      },
-    }),
-    getFiles: builder.query<
-      {
-        files: { filename: string }[];
-        totalCount: number;
-      },
-      { courseId: string | null; page?: string | null }
-    >({
-      query: ({ courseId, page }) => {
-        return {
-          url: "files",
-          method: "GET",
-          params: {
-            courseId,
-            page,
-          },
-        };
-      },
     }),
   }),
 });

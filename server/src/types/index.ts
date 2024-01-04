@@ -7,4 +7,5 @@ export interface IExpress {
 
 export interface IUser {
   id: string;
+  role: string;
 }

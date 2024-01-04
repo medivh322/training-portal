@@ -1,22 +1,6 @@
-import {
-  Layout,
-  Flex,
-  Select,
-  Input,
-  Button,
-  Menu,
-  Typography,
-  Form,
-} from "antd";
-import { useState, useMemo } from "react";
-import {
-  useParams,
-  useMatches,
-  useNavigate,
-  Link,
-  Outlet,
-  useSearchParams,
-} from "react-router-dom";
+import { Layout, Flex, Menu, Typography } from "antd";
+import { useMemo } from "react";
+import { useMatches, Link, Outlet, useSearchParams } from "react-router-dom";
 import { v4 } from "uuid";
 import { coursesApiHooks } from "../redux/courses/reducer";
 import { selectUserId } from "../redux/core/selectors";
@@ -25,14 +9,11 @@ import ChooseMenuPanel from "../components/ChooseMenuPanel";
 
 const CoursesStudent = () => {
   const matches = useMatches();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const courseId = searchParams.get("course");
 
   const match = matches[matches.length - 1];
-
-  const [currentCourse, setCurrentSource] = useState<string | null>(courseId);
 
   const studentId = useAppSelector(selectUserId);
 
@@ -49,10 +30,10 @@ const CoursesStudent = () => {
           <Link
             to={{
               pathname: "tests",
-              search: `?course=${currentCourse}`,
+              search: `?course=${courseId}`,
             }}
           >
-            Результаты
+            Тесты
           </Link>
         ),
         url: "tests",
@@ -63,7 +44,7 @@ const CoursesStudent = () => {
           <Link
             to={{
               pathname: "results",
-              search: `?course=${currentCourse}&user=${studentId}`,
+              search: `?course=${courseId}&user=${studentId}`,
             }}
           >
             Результаты
@@ -74,9 +55,7 @@ const CoursesStudent = () => {
       },
       {
         label: (
-          <Link
-            to={{ pathname: "materials", search: `?course=${currentCourse}` }}
-          >
+          <Link to={{ pathname: "materials", search: `?course=${courseId}` }}>
             Материалы
           </Link>
         ),
@@ -84,7 +63,7 @@ const CoursesStudent = () => {
         key: v4(),
       },
     ],
-    [currentCourse, studentId]
+    [courseId, studentId]
   );
 
   return (
@@ -94,7 +73,7 @@ const CoursesStudent = () => {
           <ChooseMenuPanel coursesList={coursesList} courseId={courseId} />
         )}
       </Flex>
-      {currentCourse ? (
+      {courseId ? (
         <>
           <Menu
             mode="horizontal"

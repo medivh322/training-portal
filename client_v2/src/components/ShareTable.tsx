@@ -1,18 +1,6 @@
-import { useParams } from "react-router-dom";
-import algoliasearch from "algoliasearch/lite";
-import { Hits, InstantSearch, SearchBox } from "react-instantsearch";
-import { API_BASE_URL } from "../config/serverApiConfig";
-import React, {
-  FC,
-  JSXElementConstructor,
-  Key,
-  useEffect,
-  useState,
-} from "react";
+import React, { Key, useEffect, useState } from "react";
 import { Input, Table, Button, Typography, Row, Col } from "antd";
 import { coursesApiHooks } from "../redux/courses/reducer";
-
-const searchClient = algoliasearch("YourApplicationID", `r252fferer`);
 
 const ShareTable: React.FC<{ courseId: string }> = ({ courseId }) => {
   const [search, { isLoading, data: searchMembersList, reset }] =

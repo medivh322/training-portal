@@ -5,6 +5,7 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import { API_BASE_URL } from "../../config/serverApiConfig";
 import {
+  Attachment,
   IFormTest,
   IResultTest,
   ITests,
@@ -13,6 +14,29 @@ import {
 import { FetchBaseQueryArgs } from "@reduxjs/toolkit/dist/query/fetchBaseQuery";
 import errorHandler from "../../request/errorHundler";
 import { Key } from "antd/es/table/interface";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { CHANGE_STATUS_UPLOAD_FILE, COURSES_REDUCER } from "./types";
+
+const initialState: {
+  uploadingFile: boolean;
+} = {
+  uploadingFile: false,
+};
+
+const courseSlice = createSlice({
+  name: COURSES_REDUCER,
+  initialState,
+  reducers: {
+    [CHANGE_STATUS_UPLOAD_FILE]: (
+      state,
+      action: PayloadAction<{
+        status: boolean;
+      }>
+    ) => {
+      state.uploadingFile = action.payload.status;
+    },
+  },
+});
 
 const baseQuery =
   (baseQueryOptions: FetchBaseQueryArgs) =>
@@ -35,7 +59,7 @@ export const coursesApi = createApi({
     baseUrl: `${API_BASE_URL}`,
     credentials: "include",
   }),
-  tagTypes: ["Courses", "Tests", "Members", "ResultTest"],
+  tagTypes: ["Courses", "Tests", "Members", "ResultTest", "Attachments"],
   endpoints: (builder) => ({
     getCourses: builder.query<
       { value: string; label: string }[],
@@ -258,6 +282,41 @@ export const coursesApi = createApi({
       }),
       invalidatesTags: ["Members"],
     }),
+    searchCourses: builder.mutation<
+      { value: string; label: string }[],
+      { query: string }
+    >({
+      query: ({ query }) => ({
+        url: "courses/s",
+        method: "GET",
+        params: {
+          query,
+        },
+      }),
+      transformResponse: (response: {
+        courses: { value: string; label: string }[];
+      }) => response.courses,
+    }),
+    getFiles: builder.query<
+      {
+        files: Attachment[];
+        totalCount: number;
+      },
+      { courseId: string | null; page?: string | null }
+    >({
+      query: ({ courseId, page }) => {
+        return {
+          url: "files",
+          method: "GET",
+          params: {
+            courseId,
+            page,
+          },
+        };
+      },
+      keepUnusedDataFor: 0,
+      providesTags: ["Attachments"],
+    }),
     getMembers: builder.query<
       {
         _id: string;
@@ -283,3 +342,6 @@ export const coursesApi = createApi({
 });
 
 export const coursesApiHooks = coursesApi;
+export const courseSliceState = courseSlice.getInitialState;
+export const courseSlicerAction = courseSlice.actions;
+export default courseSlice;

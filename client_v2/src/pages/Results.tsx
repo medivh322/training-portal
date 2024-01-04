@@ -178,10 +178,6 @@ const Results = () => {
     [createFormResult, resultList, role]
   );
 
-  useEffect(() => {
-    console.log("+");
-  }, []);
-
   if (!resultList.length) return <div>результаты не найдены</div>;
 
   return <Collapse items={items} defaultActiveKey={["1"]} />;

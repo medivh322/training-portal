@@ -7,6 +7,7 @@ const ChooseMenuPanel: React.FC<{
 }> = ({ coursesList, courseId }) => {
   const navigate = useNavigate();
   const location = useLocation();
+
   return coursesList.length ? (
     <Select
       style={{ width: 300, marginRight: 20 }}
@@ -19,7 +20,7 @@ const ChooseMenuPanel: React.FC<{
           search: `?course=${value}`,
         });
       }}
-      defaultValue={
+      value={
         courseId
           ? coursesList.find((elem) => elem.value === courseId)?.value
           : "выберите нужный курс"

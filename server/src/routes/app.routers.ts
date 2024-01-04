@@ -8,6 +8,8 @@ import { testController } from '@controllerstests.controller';
 import { courseController } from '@controllerscourse.controller';
 import { upload } from 'src/upload';
 import mongoose from 'mongoose';
+import { GridFSBucket } from 'src';
+import mime from 'mime-types';
 
 const router = express.Router();
 
@@ -36,6 +38,7 @@ router.post('/courses/members', courseController.setCourseMembers);
 router.get('/courses/all', courseController.getAllCourses);
 router.get('/courses/all/student', courseController.getAllCoursesForStudent);
 router.get('/courses/s/members', courseController.searchAllMembers);
+router.get('/courses/s', courseController.searchCourses);
 router.get('/courses/members', courseController.getCourseMembers);
 
 router.get('/tests', testController.getTests);
@@ -46,19 +49,14 @@ router.put('/tests', testController.updateTests);
 router.get('/test', testController.getTest);
 router.post('/test/r/save', testController.saveResultTest);
 
-router.post('/upload', upload.single('file'), (req, res) => {
+router.post('/upload/:courseId', upload.single('file'), (req, res) => {
   res.send('Файл успешно загружен');
 });
 router.get('/files', async (req, res) => {
   try {
     const { courseId } = req.query;
 
-    const perPage = 2;
-    const page = (req.query.page as string) || '1';
-    console.log(perPage * parseInt(page, 10) - perPage);
-    const files = await File.find({ 'metadata.courseId': new mongoose.Types.ObjectId(courseId as string) }, 'filename')
-      .skip(perPage * Number(page) - perPage)
-      .limit(perPage);
+    const files = await File.find({ 'metadata.courseId': new mongoose.Types.ObjectId(courseId as string) });
 
     res.status(200).json({
       success: true,
@@ -72,24 +70,35 @@ router.get('/files', async (req, res) => {
     });
   }
 });
-router.get('/file/:filename', async (req, res) => {
+router.get('/download/file/:id', async (req, res) => {
   try {
-    const filename = req.params.filename;
-    const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
-      bucketName: 'uploads',
+    const { id } = req.params;
+    const objectId = new mongoose.mongo.ObjectId(id);
+
+    const files = await GridFSBucket.find({ _id: objectId }).toArray();
+    if (files.length === 0) {
+      return res.status(404).json({ error: 'Файл не найден' });
+    }
+
+    const file = files[0];
+    const filename = file.filename;
+    const contentType = mime.lookup(filename) || 'application/octet-stream';
+
+    res.set('Content-Type', contentType);
+
+    const downloadStream = GridFSBucket.openDownloadStream(objectId);
+    downloadStream.pipe(res);
+
+    downloadStream.on('end', () => {
+      res.end();
     });
 
-    const downloadStream = bucket.openDownloadStreamByName(filename);
-
-    downloadStream.pipe(res).on('error', (err) => {
-      res.status(404).send('Файл не найден');
+    downloadStream.on('error', (error) => {
+      console.error(error);
+      res.status(500).json({ error: 'Не удалось получить файл' });
     });
-  } catch (error: any) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Ошибка' });
   }
 });
 

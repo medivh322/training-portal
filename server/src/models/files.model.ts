@@ -5,6 +5,7 @@ const fileSchema = new Schema(
     filename: String,
     metadata: {
       courseId: Types.ObjectId,
+      url: String,
     },
   },
   { strict: false },

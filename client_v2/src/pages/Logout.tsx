@@ -1,15 +1,14 @@
-import { Navigate } from "react-router-dom";
-import { coreApiHooks } from "../redux/core/reducer";
 import { useEffect } from "react";
+import { useCookies } from "react-cookie";
 
 const Logout = () => {
-  const [logout] = coreApiHooks.useLogoutMutation();
+  const [_cookies, _setCookies, removeCookies] = useCookies(["token"]);
 
   useEffect(() => {
-    logout();
-  }, [logout]);
+    removeCookies("token");
+  }, [removeCookies]);
 
-  return <Navigate to={"/"} />;
+  return null;
 };
 
 export default Logout;
