@@ -23,6 +23,8 @@ const Courses = () => {
     { skip: !teacherId }
   );
   const [create, { isLoading }] = coursesApiHooks.useCreateCoursesMutation();
+  const [deleteCourse, { isLoading: isLoadingDelete }] =
+    coursesApiHooks.useDeleteCourseMutation();
 
   const menuCourse = useMemo(
     () => [
@@ -69,9 +71,16 @@ const Courses = () => {
 
   return (
     <Layout>
-      <Flex>
-        {!!coursesList.length && (
+      <Space size={[10, 0]} align="start">
+        {!!coursesList.length ? (
           <ChooseMenuPanel coursesList={coursesList} courseId={courseId} />
+        ) : (
+          <div>проекты не найдены</div>
+        )}
+        {courseId && (
+          <Button onClick={() => deleteCourse({ courseId })}>
+            <Link to={"/"}>Удалить проект</Link>
+          </Button>
         )}
         <Form
           style={{ display: "flex" }}
@@ -79,26 +88,20 @@ const Courses = () => {
           autoComplete="off"
           onFinish={({ title }) => teacherId && create({ teacherId, title })}
         >
-          <Space size={[25, 0]} align="start">
-            <Form.Item
-              name="title"
-              rules={[
-                { required: true, message: "Пожалуйста, заполните поле" },
-              ]}
-            >
-              <Input style={{ width: 400 }} />
-            </Form.Item>
-            <Form.Item>
-              <Button loading={isLoading} type="primary" htmlType="submit">
-                Создать курс
-              </Button>
-            </Form.Item>
-            <Button>
-              <Link to={"/workshop/share"}>добавить ученика</Link>
+          <Form.Item
+            name="title"
+            rules={[{ required: true, message: "Пожалуйста, заполните поле" }]}
+          >
+            <Input style={{ width: 400 }} />
+          </Form.Item>
+          <Form.Item>
+            <Button loading={isLoading} type="primary" htmlType="submit">
+              Создать курс
             </Button>
-          </Space>
+          </Form.Item>
         </Form>
-      </Flex>
+      </Space>
+
       {!!courseId && (
         <>
           <Menu

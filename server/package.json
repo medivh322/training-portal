@@ -36,7 +36,8 @@
     "lint": "eslint src",
     "format": "npx prettier --write src",
     "format:check": "npx prettier --check src",
-    "test": "jest"
+    "test": "jest",
+    "initialization": "ts-node -r tsconfig-paths/register src/initialization.ts"
   },
   "keywords": [],
   "author": "",

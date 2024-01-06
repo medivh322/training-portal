@@ -25,7 +25,7 @@ const Tests = () => {
 
   useEffect(() => {
     formUpdate.setFieldValue("testObj", testsList?.testObj);
-  }, [testsList]);
+  }, [formUpdate, testsList]);
 
   return (
     <Layout>

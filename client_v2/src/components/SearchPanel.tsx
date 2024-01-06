@@ -8,7 +8,7 @@ const SearchPanel = () => {
 
   const handleChange = (newValue: string) => {
     navigate({
-      pathname: "/workshop/courses/tests",
+      pathname: "courses/tests",
       search: "?course=" + newValue,
     });
   };

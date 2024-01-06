@@ -10,12 +10,12 @@ const ChooseMenuPanel: React.FC<{
 
   return coursesList.length ? (
     <Select
-      style={{ width: 300, marginRight: 20 }}
+      style={{ width: 300 }}
       options={coursesList}
       onChange={(value) => {
         navigate({
           pathname: `${location.pathname}${
-            location.pathname === "/workshop/courses" ? `/tests` : ""
+            location.pathname === "courses" ? `/tests` : ""
           }`,
           search: `?course=${value}`,
         });

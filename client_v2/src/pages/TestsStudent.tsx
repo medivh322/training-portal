@@ -35,7 +35,7 @@ const TestsStudent = () => {
             <List.Item>
               <Link
                 to={{
-                  pathname: "/workshop/passing-test",
+                  pathname: "/passing-test",
                   search: `?test=${item.id}&user=${studentId}&course=${courseId}`,
                 }}
               >

@@ -5,11 +5,16 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import { API_BASE_URL } from "../../config/serverApiConfig";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { CORE_REDUCER, LOADING_FULLSCREEN, SET_ID, SET_ROLE } from "./types";
+import {
+  CORE_REDUCER,
+  LOADING_FULLSCREEN,
+  RESET_STATE,
+  SET_ID_AND_SET_ROLE,
+  SET_ROLE,
+} from "./types";
 import { Role, UserSettings, customQueryValue } from "../../types/models";
 import { FetchBaseQueryArgs } from "@reduxjs/toolkit/dist/query/fetchBaseQuery";
 import errorHandler from "../../request/errorHundler";
-import { RcFile } from "antd/es/upload";
 
 const initialState: {
   isLoadingFullScreen: boolean;
@@ -33,13 +38,15 @@ const coreReducer = createSlice({
     ) => {
       state.isLoadingFullScreen = action.payload.loading;
     },
-    [SET_ID]: (
+    [SET_ID_AND_SET_ROLE]: (
       state,
       action: PayloadAction<{
         id: string;
+        role: Role;
       }>
     ) => {
       state.userId = action.payload.id;
+      state.role = action.payload.role;
     },
     [SET_ROLE]: (
       state,
@@ -49,6 +56,7 @@ const coreReducer = createSlice({
     ) => {
       state.role = action.payload.role;
     },
+    [RESET_STATE]: (state) => initialState,
   },
 });
 
@@ -83,8 +91,12 @@ export const coreApi = createApi({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(coreReducer.actions.SET_ID({ id: data.id }));
-          dispatch(coreReducer.actions[SET_ROLE]({ role: data.role }));
+          dispatch(
+            coreReducer.actions[SET_ID_AND_SET_ROLE]({
+              id: data.id,
+              role: data.role,
+            })
+          );
         } catch (error: any) {}
       },
     }),
@@ -95,12 +107,10 @@ export const coreApi = createApi({
         body: loginParameters,
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        // dispatch(coreReducer.actions[LOADING_FULLSCREEN]({ loading: true }));
         try {
           const { data } = await queryFulfilled;
           dispatch(coreReducer.actions.SET_ROLE({ role: data.role }));
         } catch (error: any) {}
-        // dispatch(coreReducer.actions[LOADING_FULLSCREEN]({ loading: false }));
       },
     }),
     signupMember: builder.mutation<

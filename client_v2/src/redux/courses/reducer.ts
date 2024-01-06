@@ -110,6 +110,16 @@ export const coursesApi = createApi({
         invalidatesTags: ["Courses"],
       }
     ),
+    deleteCourse: builder.mutation<void, { courseId: string | null }>({
+      query: ({ courseId }) => ({
+        url: "courses",
+        method: "DELETE",
+        params: {
+          courseId,
+        },
+      }),
+      invalidatesTags: ["Courses"],
+    }),
     getTests: builder.query<
       IFormTest | ITests[],
       { courseId: string | null | undefined; convertData?: boolean }

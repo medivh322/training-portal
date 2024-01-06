@@ -11,7 +11,6 @@ import { coreApiHooks } from "./redux/core/reducer";
 import LoginPage from "./pages/Login";
 import { ConfigProvider, Spin, notification } from "antd";
 import AppLayout from "./layout/AppLayout";
-import Workshop from "./pages/Workshop";
 import Courses from "./components/Courses";
 import Tests from "./pages/Tests";
 import Logout from "./pages/Logout";
@@ -31,39 +30,34 @@ import { useCookies, withCookies } from "react-cookie";
 
 const loggenInRouter = (role: Role | null) => (
   <Route path="/" element={<Root />}>
-    <Route path="workshop" element={<Workshop />}>
-      {role === "Teacher" ? (
-        <>
-          <Route path="courses" handle={"courses"} element={<Courses />}>
-            <Route handle={"tests"} path="tests" element={<Tests />} />
-            <Route handle={"results"} path="results" element={<Results />} />
-            <Route
-              handle={"materials"}
-              path="materials"
-              element={<Materials />}
-            />
-          </Route>
-          <Route path="share" element={<Share />} />
-        </>
-      ) : role === "Admin" ? (
-        <>
-          <Route path="reg" element={<Reg />} />
-        </>
-      ) : (
-        <>
-          <Route path="passing-test" element={<PassingTest />} />
-          <Route path="courses" handle={"courses"} element={<CoursesStudent />}>
-            <Route handle={"tests"} path="tests" element={<TestsStudent />} />
-            <Route handle={"results"} path="results" element={<Results />} />
-            <Route
-              handle={"materials"}
-              path="materials"
-              element={<Materials />}
-            />
-          </Route>
-        </>
-      )}
-    </Route>
+    {role === "Teacher" && (
+      <>
+        <Route path="courses" element={<Courses />}>
+          <Route index path="tests" element={<Tests />} />
+          <Route path="results" element={<Results />} />
+          <Route path="materials" element={<Materials />} />
+        </Route>
+        <Route path="share" element={<Share />} />
+        <Route index element={<Navigate to="courses" />} />
+      </>
+    )}
+    {role === "Student" && (
+      <>
+        <Route path="passing-test" element={<PassingTest />} />
+        <Route path="courses" element={<CoursesStudent />}>
+          <Route path="tests" element={<TestsStudent />} />
+          <Route path="results" element={<Results />} />
+          <Route path="materials" element={<Materials />} />
+        </Route>
+        <Route index element={<Navigate to="courses" />} />
+      </>
+    )}
+    {role === "Admin" && (
+      <>
+        <Route index path="reg" element={<Reg />} />
+        <Route index element={<Navigate to="reg" />} />
+      </>
+    )}
     <Route path="login" element={<Navigate to="/" />} />
     <Route path="logout" element={<Logout />} />
     <Route
@@ -106,13 +100,15 @@ const App = () => {
     () =>
       createBrowserRouter(
         createRoutesFromElements(
-          !isError && !isUndefined(token.token)
+          !isError && !isUndefined(token.token) && role
             ? loggenInRouter(role)
             : noLoggenRouter
         )
       ),
     [isError, role, token.token]
   );
+
+  console.log(role);
 
   if (fetchingCheckToken || isLoadingFullScreen)
     return <Spin spinning fullscreen />;

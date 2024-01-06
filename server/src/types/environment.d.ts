@@ -6,6 +6,7 @@ declare global {
       DATABASE: string;
       JWT_SECRET: string;
       PORT: string;
+      ADMIN_PASSWORD: string;
     }
   }
 }

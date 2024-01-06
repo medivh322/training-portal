@@ -1,5 +1,6 @@
 import mongoose, { Types } from 'mongoose';
 import { boolean } from 'yup';
+import { File } from '@modelsfiles.model';
 
 const answerSchema = new mongoose.Schema({
   text: String,
@@ -21,6 +22,16 @@ const testSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+// testSchema.pre('deleteMany', async function () {
+//   const tests = await this.model.find(this.getQuery());
+
+//   if (tests.length) {
+//     for (const test of tests) {
+//       await File.deleteOne({ 'metadata.courseId': new mongoose.Types.ObjectId(test._id as string) });
+//     }
+//   }
+// });
 
 const Test = mongoose.models.Test || mongoose.model('Test', testSchema);
 

@@ -26,6 +26,25 @@ const createCourse = async (req: express.Request, res: express.Response) => {
     });
   }
 };
+
+const deleteCourse = async (req: express.Request, res: express.Response) => {
+  try {
+    const { courseId } = req.query;
+
+    await Course.deleteOne({ _id: new mongoose.Types.ObjectId(courseId as string) });
+
+    res.status(200).json({
+      success: true,
+      message: 'курс успешно удален',
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: 'не удалось удалить курс',
+    });
+  }
+};
+
 const getAllCourses = async (req: express.Request, res: express.Response) => {
   try {
     const teacherId = req.query.teacherId as string;
@@ -293,6 +312,7 @@ const searchCourses = async (req: express.Request, res: express.Response) => {
 export const courseController = {
   getAllCourses,
   createCourse,
+  deleteCourse,
   searchAllMembers,
   setCourseMembers,
   getCourseMembers,
