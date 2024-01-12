@@ -108,6 +108,8 @@ const getResultsTests = async (req: express.Request, res: express.Response) => {
             testId: 1,
             student: '$userInfo.login',
             title: '$testDetails.title',
+            totalCorrectAnswers: 1,
+            totalQuestions: 1,
             questions: {
               $map: {
                 input: '$questions',
@@ -218,6 +220,8 @@ const getResultsTests = async (req: express.Request, res: express.Response) => {
             _id: 1,
             testId: 1,
             title: '$testDetails.title',
+            totalQuestions: 1,
+            totalCorrectAnswers: 1,
             questions: {
               $map: {
                 input: '$questions',
@@ -328,6 +332,8 @@ const saveResultTest = async (req: express.Request, res: express.Response) => {
               isCorrect: indexCorrectAnswer === iAnswer,
             }));
 
+            if (result[iQuestion] === indexCorrectAnswer) totalCorrectAnswers++;
+
             return {
               _id: question._id,
               type: question.type,
@@ -346,7 +352,7 @@ const saveResultTest = async (req: express.Request, res: express.Response) => {
             const mapAnswers = question.answers.map((answer, iAnswer) => ({
               _id: answer._id,
               isChoose: _.indexOf(arrayResult, iAnswer) >= 0,
-              isCorrect: _.indexOf(arrayResult, iAnswer) >= 0,
+              isCorrect: _.indexOf(indexArrayCorrectAnswer, iAnswer) >= 0,
             }));
 
             if (_.isEqual(result[iQuestion], indexArrayCorrectAnswer)) totalCorrectAnswers++;

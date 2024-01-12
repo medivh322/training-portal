@@ -65,6 +65,8 @@ export interface IResultTest {
   studentId: string;
   student?: string;
   title: string;
+  indexCorrectAnswer: string;
+  totalQuestions: string;
   questions: {
     title?: string;
     _id?: string;

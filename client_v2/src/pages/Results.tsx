@@ -49,9 +49,13 @@ const Results = () => {
                               <div
                                 style={{
                                   padding: "15px",
-                                  background: answer.isCorrect
-                                    ? "#C0FFC0"
-                                    : "#FFC0C0",
+                                  background: answer.isChoose
+                                    ? answer.isCorrect
+                                      ? "#C0FFC0"
+                                      : "#FFC0C0"
+                                    : answer.isCorrect
+                                    ? "#FFC0C0"
+                                    : "#FFFFFF",
                                 }}
                               >
                                 <Radio
@@ -70,9 +74,13 @@ const Results = () => {
                               <div
                                 style={{
                                   padding: "15px",
-                                  background: answer.isCorrect
-                                    ? "#C0FFC0"
-                                    : "#FFC0C0",
+                                  background: answer.isChoose
+                                    ? answer.isCorrect
+                                      ? "#C0FFC0"
+                                      : "#FFC0C0"
+                                    : answer.isCorrect
+                                    ? "#FFC0C0"
+                                    : "#FFFFFF",
                                 }}
                               >
                                 <Checkbox
@@ -89,6 +97,11 @@ const Results = () => {
                       </Flex>
                     </Card>
                   ))}
+                  <div>
+                    {"totalQuestions" in group && "totalCorrectAnswers" in group
+                      ? `Количество правильных ответов: ${group.totalCorrectAnswers} из ${group.totalQuestions}`
+                      : null}
+                  </div>
                 </>
               ),
             }))}
@@ -116,7 +129,9 @@ const Results = () => {
                             ? answer.isCorrect
                               ? "#C0FFC0"
                               : "#FFC0C0"
-                            : "none",
+                            : answer.isCorrect
+                            ? "#C0FFC0"
+                            : "#FFFFFF",
                         }}
                       >
                         <Radio
@@ -139,7 +154,9 @@ const Results = () => {
                             ? answer.isCorrect
                               ? "#C0FFC0"
                               : "#FFC0C0"
-                            : "none",
+                            : answer.isCorrect
+                            ? "#C0FFC0"
+                            : "#FFFFFF",
                         }}
                       >
                         <Checkbox
@@ -147,7 +164,7 @@ const Results = () => {
                           key={answer._id}
                           value={i}
                         >
-                          {answer.text}
+                          {answer.text + "" + answer.isCorrect}
                         </Checkbox>
                       </div>
                     ))}
@@ -156,6 +173,11 @@ const Results = () => {
               </Flex>
             </Card>
           ))}
+          <div>
+            {"totalQuestions" in data && "totalCorrectAnswers" in data
+              ? `Количество правильных ответов: ${data.totalCorrectAnswers} из ${data.totalQuestions}`
+              : null}
+          </div>
         </div>
       );
     },

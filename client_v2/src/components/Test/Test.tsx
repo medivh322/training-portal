@@ -54,7 +54,7 @@ const Test: FC<{
                 }
               />
             ))}
-            <Button type="dashed" onClick={() => questionsOpt.add()} block>
+            <Button type="dashed" onClick={() => questionsOpt.add()}>
               добавить вопрос
             </Button>
             <Form.ErrorList errors={errors} />

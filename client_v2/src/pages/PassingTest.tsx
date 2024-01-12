@@ -1,7 +1,7 @@
-import { useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { coursesApiHooks } from "../redux/courses/reducer";
 import Layout from "antd/es/layout/layout";
-import { Button, Card, Checkbox, Form, Radio } from "antd";
+import { Button, Card, Checkbox, Form, Radio, Space } from "antd";
 import { v4 } from "uuid";
 
 const PassingTest = () => {
@@ -42,19 +42,23 @@ const PassingTest = () => {
             >
               {question.type === "single" ? (
                 <Radio.Group>
-                  {question.answers.map((answer, i) => (
-                    <Radio key={v4()} value={i}>
-                      {answer.text}
-                    </Radio>
-                  ))}
+                  <Space direction="vertical">
+                    {question.answers.map((answer, i) => (
+                      <Radio key={v4()} value={i}>
+                        {answer.text}
+                      </Radio>
+                    ))}
+                  </Space>
                 </Radio.Group>
               ) : (
                 <Checkbox.Group>
-                  {question.answers.map((answer, i) => (
-                    <Checkbox key={v4()} value={i}>
-                      {answer.text}
-                    </Checkbox>
-                  ))}
+                  <Space direction="vertical">
+                    {question.answers.map((answer, i) => (
+                      <Checkbox key={v4()} value={i}>
+                        {answer.text}
+                      </Checkbox>
+                    ))}
+                  </Space>
                 </Checkbox.Group>
               )}
             </Form.Item>

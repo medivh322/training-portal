@@ -48,30 +48,32 @@ const ArticlesUpdate = () => {
         </Space>
       }
     >
-      <Form layout="vertical" form={form}>
-        <Form.Item name="name" label="Название:">
-          <Input />
-        </Form.Item>
-        <Form.Item name={"text"} label="Текст статьи:">
-          <CKEditor
-            editor={ClassicEditor}
-            config={{
-              toolbar: [
-                "bold",
-                "italic",
-                "link",
-                "bulletedList",
-                "numberedList",
-                "blockQuote",
-              ],
-            }}
-            data="<p>введите описание</p>"
-            onChange={(_event, editor) =>
-              form.setFieldValue("text", editor.getData())
-            }
-          />
-        </Form.Item>
-      </Form>
+      {dataArticle && (
+        <Form layout="vertical" form={form}>
+          <Form.Item name="name" label="Название:">
+            <Input />
+          </Form.Item>
+          <Form.Item name={"text"} label="Текст статьи:">
+            <CKEditor
+              editor={ClassicEditor}
+              config={{
+                toolbar: [
+                  "bold",
+                  "italic",
+                  "link",
+                  "bulletedList",
+                  "numberedList",
+                  "blockQuote",
+                ],
+              }}
+              data={dataArticle.text}
+              onChange={(_event, editor) =>
+                form.setFieldValue("text", editor.getData())
+              }
+            />
+          </Form.Item>
+        </Form>
+      )}
     </Drawer>
   );
 };

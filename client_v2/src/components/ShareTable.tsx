@@ -12,7 +12,7 @@ const ShareTable: React.FC<{ courseId: string }> = ({ courseId }) => {
 
   const [membersIds, setMembersIds] = useState<Key[]>([]);
   useEffect(() => {
-    reset();
+    if (successSetMember) reset();
   }, [reset, successSetMember]);
 
   return (

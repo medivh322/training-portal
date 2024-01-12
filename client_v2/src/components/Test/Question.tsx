@@ -11,7 +11,6 @@ import {
   Checkbox,
   Flex,
   Space,
-  FormInstance,
 } from "antd";
 import { FC, useEffect, useMemo, useState } from "react";
 
@@ -42,7 +41,7 @@ const Question: FC<{
   );
 
   return (
-    <Col span={6}>
+    <Col span={12}>
       <Card>
         <Form.Item
           name={[question.name, "question_name"]}
@@ -76,7 +75,7 @@ const Question: FC<{
           {(answers, answersOpt, { errors }) => (
             <>
               <Row>
-                <Col span={3}>
+                <Col span={1}>
                   {typeAnswer === "multiple" ? (
                     <Form.Item
                       name={[0, "multipleAnswers"]}
@@ -119,26 +118,36 @@ const Question: FC<{
                     </Form.Item>
                   )}
                 </Col>
-                <Col span={21}>
-                  <Space direction="vertical" size={25} align="center">
+                <Col span={23}>
+                  <Space
+                    style={{ width: "100%" }}
+                    direction="vertical"
+                    size={25}
+                  >
                     {answers.map((answer) => (
-                      <Flex key={answer.name} style={{ height: 32 }}>
-                        <Form.Item
-                          name={[answer.name, "valueInput"]}
-                          style={{ marginBottom: "0" }}
-                          rules={[
-                            {
-                              required: true,
-                              message: "введите название ответа",
-                            },
-                          ]}
-                        >
-                          <Input />
-                        </Form.Item>
-                        <Button onClick={() => answersOpt.remove(answer.name)}>
-                          удалить вариант
-                        </Button>
-                      </Flex>
+                      <Row key={answer.name} style={{ height: 32 }}>
+                        <Col span={19}>
+                          <Form.Item
+                            name={[answer.name, "valueInput"]}
+                            style={{ marginBottom: "0" }}
+                            rules={[
+                              {
+                                required: true,
+                                message: "введите название ответа",
+                              },
+                            ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col span={5}>
+                          <Button
+                            onClick={() => answersOpt.remove(answer.name)}
+                          >
+                            удалить вариант
+                          </Button>
+                        </Col>
+                      </Row>
                     ))}
                   </Space>
                 </Col>

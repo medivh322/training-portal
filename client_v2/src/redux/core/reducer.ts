@@ -10,7 +10,6 @@ import {
   LOADING_FULLSCREEN,
   RESET_STATE,
   SET_ID_AND_SET_ROLE,
-  SET_ROLE,
 } from "./types";
 import { Role, UserSettings, customQueryValue } from "../../types/models";
 import { FetchBaseQueryArgs } from "@reduxjs/toolkit/dist/query/fetchBaseQuery";
@@ -46,14 +45,6 @@ const coreReducer = createSlice({
       }>
     ) => {
       state.userId = action.payload.id;
-      state.role = action.payload.role;
-    },
-    [SET_ROLE]: (
-      state,
-      action: PayloadAction<{
-        role: Role;
-      }>
-    ) => {
       state.role = action.payload.role;
     },
     [RESET_STATE]: (state) => initialState,
@@ -100,7 +91,7 @@ export const coreApi = createApi({
         } catch (error: any) {}
       },
     }),
-    login: builder.mutation<{ role: Role }, UserSettings>({
+    login: builder.mutation<{ role: Role; id: string }, UserSettings>({
       query: (loginParameters) => ({
         url: "login",
         method: "POST",
@@ -109,7 +100,12 @@ export const coreApi = createApi({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(coreReducer.actions.SET_ROLE({ role: data.role }));
+          dispatch(
+            coreReducer.actions[SET_ID_AND_SET_ROLE]({
+              id: data.id,
+              role: data.role,
+            })
+          );
         } catch (error: any) {}
       },
     }),

@@ -1,4 +1,13 @@
-import { Button, Card, Col, Flex, Layout, List, Row, Typography } from "antd";
+import {
+  Button,
+  Divider,
+  Col,
+  Flex,
+  Layout,
+  List,
+  Row,
+  Typography,
+} from "antd";
 import {
   Link,
   Outlet,
@@ -26,9 +35,9 @@ const Articles = () => {
       {role === "Teacher" && (
         <Button onClick={() => navigate("c")}>добавить статью</Button>
       )}
-      <Layout style={{ display: "block" }}>
+      <Layout style={{ display: "block", marginTop: "30px" }}>
         <Row>
-          <Col span={18}>
+          <Col span={12}>
             <Typography.Text>Список статей:</Typography.Text>
             <List
               pagination={{
@@ -55,7 +64,9 @@ const Articles = () => {
                         </Typography.Title>
                       }
                       description={
-                        <Typography.Text>{article.author}</Typography.Text>
+                        <Typography.Text>
+                          Автор: {article.author}
+                        </Typography.Text>
                       }
                     />
                     <div>{format(article.createdAt, "yyyy-MM-dd")}</div>
@@ -64,9 +75,9 @@ const Articles = () => {
               )}
             />
           </Col>
+          <Divider orientation="left">Список ваших статей:</Divider>
           {role === "Teacher" && (
             <Col span={6}>
-              <Typography.Text>Список ваших статей:</Typography.Text>
               <List
                 style={{ width: "80%", padding: "10px" }}
                 dataSource={articlesList}
