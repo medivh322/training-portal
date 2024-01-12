@@ -4,11 +4,16 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { coreApi } from "./core/reducer";
 import { coursesApi } from "./courses/reducer";
+import articlesApi from "./articles/reducer";
 
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat([coreApi.middleware, coursesApi.middleware]),
+    getDefaultMiddleware().concat([
+      coreApi.middleware,
+      coursesApi.middleware,
+      articlesApi.middleware,
+    ]),
 });
 
 setupListeners(store.dispatch);

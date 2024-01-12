@@ -3,6 +3,7 @@ import { testController } from '@controllerstests.controller';
 import { courseController } from '@controllerscourse.controller';
 import { upload } from 'src/upload';
 import { commonController } from '@controllerscoreControllers/common.contoller';
+import { articelsController } from '@controllersarticles.controller';
 
 const router = express.Router();
 
@@ -29,5 +30,10 @@ router.post('/upload/:courseId', upload.single('file'), (req, res) => {
 router.get('/files', commonController.getFiles);
 router.get('/download/file/:id', commonController.downloadFile);
 router.get('/role', commonController.getRole);
+
+router.post('/articles', articelsController.createArticle);
+router.get('/articles', articelsController.getArticles);
+router.get('/articles/:articleId', articelsController.getArticle);
+router.put('/articles', articelsController.updateArticle);
 
 export { router as coreApiRouter };

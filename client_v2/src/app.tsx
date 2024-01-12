@@ -27,6 +27,10 @@ import Materials from "./pages/Materials";
 import { isUndefined } from "lodash";
 import { useEffect, useMemo } from "react";
 import { useCookies, withCookies } from "react-cookie";
+import Articles from "./pages/Articles";
+import ArticlesCreate from "./pages/ArticlesCreate";
+import ArticlesUpdate from "./pages/ArticleUpdate";
+import ArticleDetail from "./pages/ArticleDetail";
 
 const loggenInRouter = (role: Role | null) => (
   <Route path="/" element={<Root />}>
@@ -39,6 +43,11 @@ const loggenInRouter = (role: Role | null) => (
         </Route>
         <Route path="share" element={<Share />} />
         <Route index element={<Navigate to="courses" />} />
+        <Route path="articles" element={<Articles />}>
+          <Route path="c" element={<ArticlesCreate />} />
+          <Route path="s" element={<ArticlesUpdate />} />
+        </Route>
+        <Route path="articles/detail/:articleId" element={<ArticleDetail />} />
       </>
     )}
     {role === "Student" && (
@@ -50,6 +59,8 @@ const loggenInRouter = (role: Role | null) => (
           <Route path="materials" element={<Materials />} />
         </Route>
         <Route index element={<Navigate to="courses" />} />
+        <Route path="articles" element={<Articles />} />
+        <Route path="articles/detail/:articleId" element={<ArticleDetail />} />
       </>
     )}
     {role === "Admin" && (
@@ -107,8 +118,6 @@ const App = () => {
       ),
     [isError, role, token.token]
   );
-
-  console.log(role);
 
   if (fetchingCheckToken || isLoadingFullScreen)
     return <Spin spinning fullscreen />;

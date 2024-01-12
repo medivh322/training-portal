@@ -31,6 +31,10 @@ const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
     () =>
       [
         {
+          label: <Link to={"/articles"}>Статьи</Link>,
+          key: v4(),
+        },
+        {
           label: <Link to={"/courses"}>Курсы</Link>,
           key: v4(),
         },
