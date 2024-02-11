@@ -164,7 +164,7 @@ const Results = () => {
                           key={answer._id}
                           value={i}
                         >
-                          {answer.text + "" + answer.isCorrect}
+                          {answer.text}
                         </Checkbox>
                       </div>
                     ))}
